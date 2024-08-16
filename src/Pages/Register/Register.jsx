@@ -1,18 +1,23 @@
-import React from "react";
+import useAuth from "../../Hooks/useAuth";
 
 const Register = () => {
+  const { createUserWithEmailAndPass } = useAuth();
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const from = e.target;
+    const name = from.name.value;
+    const email = from.email.value;
+    const pass = from.password.value;
 
-    const handleSubmit = (e) =>{
-        e.preventDefault();
-        const from = e.target;
-        const name = from.name.value;
-        const email = from.email.value;
-        const pass = from.password.value;
-
-        console.log(name, email, pass)
-    }
-
+    createUserWithEmailAndPass(email, pass)
+      .then((res) => {
+        console.log(res.user);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">

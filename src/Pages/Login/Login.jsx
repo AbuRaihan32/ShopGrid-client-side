@@ -1,10 +1,28 @@
 import React from "react";
+import useAuth from "../../Hooks/useAuth";
 
 const Login = () => {
+  const { signInWithEmail } = useAuth();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const from = e.target;
+    const email = from.email.value;
+    const pass = from.password.value;
+
+    signInWithEmail(email, pass)
+      .then((res) => {
+        console.log(res.user);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-        <form className="card-body">
+        <form onSubmit={handleSubmit} className="card-body">
           <div className="form-control">
             <label className="label">
               <span className="label-text">Email</span>
@@ -12,6 +30,7 @@ const Login = () => {
             <input
               type="email"
               placeholder="email"
+              name="email"
               className="input input-bordered"
               required
             />
@@ -23,6 +42,7 @@ const Login = () => {
             <input
               type="password"
               placeholder="password"
+              name="password"
               className="input input-bordered"
               required
             />
