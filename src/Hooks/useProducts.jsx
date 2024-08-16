@@ -5,7 +5,7 @@ const useProducts = () => {
   const axiosPublic = useAxiosPublic();
 
   const { data: products = [], isPending } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["product"],
     queryFn: async () => {
       const res = await axiosPublic.get("/products");
       return res.data;

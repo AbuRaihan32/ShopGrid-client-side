@@ -1,16 +1,9 @@
-import Card from "../../Copmonents/Card";
-import useProducts from "../../Hooks/useProducts";
+import { useLoaderData } from "react-router-dom";
+import CardContainer from "../../Copmonents/CardContainer";
 
 const Home = () => {
-  const { products } = useProducts();
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {products.map((pro) => (
-        <Card key={pro._id} pro={pro}></Card>
-      ))}
-    </div>
-  );
+  const {count} = useLoaderData();
+  return <CardContainer count={count}></CardContainer>;
 };
 
 export default Home;
