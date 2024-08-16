@@ -1,38 +1,98 @@
-import { useLoaderData } from "react-router-dom";
-import useProducts from "../Hooks/useProducts";
-import Card from "./Card";
+import { useQuery } from "@tanstack/react-query";
+import { IoIosArrowDown } from "react-icons/io";
+import { FaSearch } from "react-icons/fa";
+import { PuffLoader } from "react-spinners";
 import { useState } from "react";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
+import Card from "./Card";
 
-const CardContainer = ({ count }) => {
+const CardContainer = () => {
+  const [numOfPages, setNumOfPage] = useState(0);
   const axiosPublic = useAxiosPublic();
   const [currentPage, setCurrentPage] = useState(0);
   const itemPerPage = 8;
-  const numOfPages = Math.ceil(count / itemPerPage);
   const pages = [...Array(numOfPages).keys()];
+  const [searchText, setSearchText] = useState("");
 
-  console.log(pages);
-
-  const { data: products = [], isPending } = useQuery({
-    queryKey: ["products", currentPage, itemPerPage],
+  // Fetch products with pagination and search functionality
+  const {
+    data: products = [],
+    isPending,
+    isLoading,
+  } = useQuery({
+    queryKey: ["products", currentPage, searchText],
     queryFn: async () => {
       const res = await axiosPublic.get(
-        `/products?page=${currentPage}&size=${itemPerPage}`
+        `/products?page=${currentPage}&size=${itemPerPage}&searchText=${searchText}`
       );
-      return res.data;
+      setNumOfPage(res.data.pageNum);
+      return res.data.result;
     },
   });
 
+  // Handle search input change
+  const handleSearch = (e) => {
+    const searchValue = e.target.search.value;
+    setSearchText(searchValue);
+    setCurrentPage(0);
+  };
+
+  // Loading state with spinner
+  if (isPending || isLoading) {
+    return (
+      <div className="w-full h-[170px] flex items-center justify-center">
+        <PuffLoader color="#25BCCF"></PuffLoader>
+      </div>
+    );
+  }
+
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((pro) => (
-          <Card key={pro._id} pro={pro}></Card>
-        ))}
+      {/* search and sort */}
+      <div className="flex flex-col items-center justify-center md:flex-row md:justify-evenly gap-3 mb-7">
+        <div className="relative inline-flex self-center">
+          <div className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full">
+            <IoIosArrowDown className="text-xl"></IoIosArrowDown>
+          </div>
+          <select className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-[300px] pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full">
+            <option>Sort By - </option>
+            <option value="ascending">Earliest Date to Latest</option>
+            <option value="descending">Latest Date Earliest</option>
+          </select>
+        </div>
+
+        <div className="w-fit">
+          <form onSubmit={handleSearch} className="relative inline-flex self-center">
+            <input
+              defaultValue={searchText}
+              className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-[300px] pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+              type="text"
+              placeholder="Search"
+              name="search"
+            />
+
+            <button
+              className={`text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[12px] px-5 rounded-r-full`}
+            >
+              <FaSearch className="text-xs"></FaSearch>
+            </button>
+          </form>
+        </div>
       </div>
 
-      <div className="mx-auto w-fit mt-10">
+      {products.length < 1 ? (
+        <div className="w-full h-[200px] flex items-center justify-center font-semibold text-4xl text-center">
+          <div>No Product available.</div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {products?.map((pro) => (
+            <Card key={pro._id} pro={pro}></Card>
+          ))}
+        </div>
+      )}
+
+      <div className={`mx-auto w-fit mt-10`}>
         <button
           onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}
           className="px-3 py-2 bg-gray-200 rounded-lg text-black font-semibold"
