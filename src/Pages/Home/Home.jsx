@@ -1,12 +1,14 @@
+import Card from "../../Copmonents/Card";
 import useProducts from "../../Hooks/useProducts";
 
 const Home = () => {
   const { products } = useProducts();
-  console.log(products);
 
   return (
-    <div>
-      <h1 className="text-3xl">This Is Home Page</h1>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {products.map((pro) => (
+        <Card key={pro._id} pro={pro}></Card>
+      ))}
     </div>
   );
 };
