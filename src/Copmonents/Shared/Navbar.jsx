@@ -1,7 +1,24 @@
 import { BiLogInCircle, BiLogOutCircle } from "react-icons/bi";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import useAuth from "../../Hooks/useAuth";
+import { PuffLoader } from "react-spinners";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
+  const {user, logOut} = useAuth();
+
+  const signOutBtnHandler = () => {
+    logOut().then(() => {
+      Swal.fire({
+        title: "Logged Out!",
+        text: "You have been Logged Out.",
+        icon: "success",
+      });
+    });
+  };
+
+
+
   const NavLinks = (
     <>
       <li>
@@ -85,7 +102,7 @@ const Navbar = () => {
           </ul>
         </div>
         <a href="/">
-          <img className="h-[80px] overflow-hidden" src={logo} alt="" />
+          <p className="btn btn-outline">ShopGrid</p>
         </a>
       </div>
       <div className="navbar-center hidden lg:flex">
