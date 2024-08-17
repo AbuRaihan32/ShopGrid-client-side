@@ -89,7 +89,7 @@ const Navbar = () => {
           </ul>
         </div>
         <a href="/">
-          <p className="btn btn-outline">ShopGrid</p>
+          <img className="w-full h-20 sm:ml-7" src="/logo.png" alt="" />
         </a>
       </div>
       <div className="navbar-center hidden lg:flex">

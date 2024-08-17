@@ -15,10 +15,14 @@ const Footer = () => {
                 >
                   <div className="h-[80px] mx-auto rounded-full">
                     {/* logo */}
-                    <p className="btn btn-outline border-white text-white"> ShopGrid</p>
+                    <img
+                      className="w-full h-20 sm:ml-7"
+                      src="/logo.png"
+                      alt=""
+                    />
                   </div>
                 </a>
-                <p>DiagPulse Is Another Name For Honesty</p>
+                <p>ShopGrid Is Another Name For Honesty</p>
               </div>
               <div className="grid grid-cols-2 text-sm gap-x-3 gap-y-8 lg:w-2/3 sm:grid-cols-4">
                 <div className="space-y-3">
