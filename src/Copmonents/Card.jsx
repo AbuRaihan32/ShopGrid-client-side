@@ -6,6 +6,7 @@ const Card = ({ pro }) => {
   const {
     productName,
     productImage,
+    brandName,
     description,
     price,
     category,
@@ -21,12 +22,15 @@ const Card = ({ pro }) => {
         />
       </figure>
       <div className="card-body p-5">
-        <div className="badge badge-secondary absolute right-5">{price} $</div>
-        <h2 className="card-title mt-7">{productName}</h2>
+        <h2 className="card-title">{productName}</h2>
+        <div className="flex items-center justify-between">
+          <div className="badge badge-secondary right-5">Brand : {brandName}</div>
+          <div className="badge badge-secondary right-5">{price} $</div>
+        </div>
         <p>{description}</p>
         <div className="text-[14px]">Created at: {createdAt}</div>
         <div className="flex items-center justify-between">
-          <div className=" border px-2 rounded-xl">{category.split(' ')}</div>
+          <div className=" border px-2 rounded-xl">{category.split(" ")}</div>
           <div className="flex gap-2">
             {<Rating style={{ maxWidth: 80 }} value={ratings} readOnly />}
             {ratings}

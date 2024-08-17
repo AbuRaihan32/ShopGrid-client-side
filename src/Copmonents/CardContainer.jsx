@@ -15,16 +15,29 @@ const CardContainer = () => {
   const [searchText, setSearchText] = useState("");
   const [filteredPro, setFilteredPro] = useState([]);
 
+  const [brandFilter, setBrandFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
   // Fetch products with pagination and search functionality
   const {
     data: products = [],
     isPending,
     isLoading,
   } = useQuery({
-    queryKey: ["products", currentPage, searchText],
+    queryKey: [
+      "products",
+      currentPage,
+      searchText,
+      brandFilter,
+      categoryFilter,
+      minPrice,
+      maxPrice,
+    ],
     queryFn: async () => {
       const res = await axiosPublic.get(
-        `/products?page=${currentPage}&size=${itemPerPage}&searchText=${searchText}`
+        `/products?page=${currentPage}&size=${itemPerPage}&searchText=${searchText}&brand=${brandFilter}&category=${categoryFilter}&min=${minPrice}&max=${maxPrice}`
       );
       setNumOfPage(res.data.pageNum);
       return res.data.result;
@@ -34,6 +47,25 @@ const CardContainer = () => {
   useEffect(() => {
     setFilteredPro(products);
   }, [products]);
+
+  //   useEffect(() => {
+  //     let filtered = [...products];
+
+  //     if (brandFilter) {
+  //       filtered = filtered.filter((pro) => pro.brandName === brandFilter);
+  //     }
+  //     if (categoryFilter) {
+  //       filtered = filtered.filter((pro) => pro.category === categoryFilter);
+  //     }
+  //     if (minPrice) {
+  //       filtered = filtered.filter((pro) => pro.price >= minPrice);
+  //     }
+  //     if (maxPrice) {
+  //       filtered = filtered.filter((pro) => pro.price <= maxPrice);
+  //     }
+
+  //     setFilteredPro(filtered);
+  //   }, [brandFilter, categoryFilter, minPrice, maxPrice, products]);
 
   // Handle search input change
   const handleSearch = (e) => {
@@ -49,9 +81,7 @@ const CardContainer = () => {
       sortedPro.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else if (selectedValue === "descending") {
       sortedPro.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } 
-    
-    else if (selectedValue === "lowToHigh") {
+    } else if (selectedValue === "lowToHigh") {
       sortedPro.sort((a, b) => new Date(a.price) - new Date(b.price));
     } else if (selectedValue === "highToLow") {
       sortedPro.sort((a, b) => new Date(b.price) - new Date(a.price));
@@ -70,8 +100,8 @@ const CardContainer = () => {
 
   return (
     <>
-      {/* search and sort */}
-      <div className="flex flex-col items-center justify-center md:flex-row md:justify-evenly gap-3 mb-7">
+      {/* search and sort and filter*/}
+      <div className="flex flex-col items-center md:flex-row md:justify-between gap-3 mb-7">
         <div className="relative inline-flex self-center">
           <div className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full pointer-events-none">
             <IoIosArrowDown className="text-xl"></IoIosArrowDown>
@@ -108,6 +138,80 @@ const CardContainer = () => {
             </button>
           </form>
         </div>
+
+        {/* filters with drawer */}
+        <div className="drawer drawer-end z-50">
+          <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content">
+            {/* Page content here */}
+            <label
+              htmlFor="my-drawer-4"
+              className="drawer-button btn btn-primary"
+            >
+              Filters
+            </label>
+          </div>
+          <div className="drawer-side">
+            <label
+              htmlFor="my-drawer-4"
+              aria-label="close sidebar"
+              className="drawer-overlay"
+            ></label>
+            {/* Filters  */}
+            <div className="flex flex-col gap-3 mb-7 bg-base-200 text-base-content min-h-full w-[400px] p-10">
+              {/* Brand Filter */}
+              <select
+                defaultValue={brandFilter}
+                onChange={(e) => setBrandFilter(e.target.value)}
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10  pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+              >
+                <option value="">All Brands</option>
+                <option value="SoundWave">SoundWave</option>
+                <option value="VisionTech">VisionTech</option>
+                <option value="ComfortSeat">ComfortSeat</option>
+                <option value="GamerX">GamerX</option>
+                <option value="PhotoMaster">PhotoMaster</option>
+                <option value="AudioPro">AudioPro</option>
+                <option value="SmartHome">SmartHome</option>
+                <option value="TechAudio">TechAudio</option>
+
+                {/* Add more brand options as needed */}
+              </select>
+
+              {/* Category Filter */}
+              <select
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                defaultValue={categoryFilter}
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10  pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+              >
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Photography">Photography</option>
+                <option value="Computers">Computers</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Home Appliances">Home Appliances</option>
+                <option value="Wearables">Wearables</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Personal Care">Personal Care</option>
+                {/* Add more category options as needed */}
+              </select>
+
+              {/* Price Range Filter */}
+              <input
+                type="number"
+                placeholder="Min Price"
+                onChange={(e) => setMinPrice(e.target.value)}
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5  bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+              />
+              <input
+                type="number"
+                placeholder="Max Price"
+                onChange={(e) => setMaxPrice(e.target.value)}
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5  bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {filteredPro.length < 1 ? (
@@ -122,7 +226,9 @@ const CardContainer = () => {
         </div>
       )}
 
-      <div className={`mx-auto w-fit mt-10`}>
+      <div
+        className={`mx-auto w-fit mt-10 ${pages.length === 0 ? "hidden" : ""}`}
+      >
         <button
           onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}
           className="px-3 py-2 bg-gray-200 rounded-lg text-black font-semibold"
