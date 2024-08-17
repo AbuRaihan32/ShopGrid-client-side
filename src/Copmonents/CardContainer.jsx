@@ -49,6 +49,12 @@ const CardContainer = () => {
       sortedPro.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else if (selectedValue === "descending") {
       sortedPro.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } 
+    
+    else if (selectedValue === "lowToHigh") {
+      sortedPro.sort((a, b) => new Date(a.price) - new Date(b.price));
+    } else if (selectedValue === "highToLow") {
+      sortedPro.sort((a, b) => new Date(b.price) - new Date(a.price));
     }
     setFilteredPro(sortedPro);
   };
@@ -67,7 +73,7 @@ const CardContainer = () => {
       {/* search and sort */}
       <div className="flex flex-col items-center justify-center md:flex-row md:justify-evenly gap-3 mb-7">
         <div className="relative inline-flex self-center">
-          <div className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full">
+          <div className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full pointer-events-none">
             <IoIosArrowDown className="text-xl"></IoIosArrowDown>
           </div>
           <select
@@ -77,6 +83,8 @@ const CardContainer = () => {
             <option>Sort By - </option>
             <option value="descending">Newest first</option>
             <option value="ascending">Oldest first</option>
+            <option value="lowToHigh">Price : Low to high</option>
+            <option value="highToLow">Price : High to low</option>
           </select>
         </div>
 
