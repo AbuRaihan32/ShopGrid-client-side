@@ -1,12 +1,11 @@
 import axios from "axios";
 
-
 const axiosPublic = axios.create({
-    baseURL: 'http://localhost:5000'
-})
+  baseURL: "https://shop-grid-server-side.vercel.app",
+});
 
 const useAxiosPublic = () => {
-    return axiosPublic;
+  return axiosPublic;
 };
 
 export default useAxiosPublic;

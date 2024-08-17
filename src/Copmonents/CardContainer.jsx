@@ -5,22 +5,26 @@ import { PuffLoader } from "react-spinners";
 import { useEffect, useState } from "react";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import Card from "./Card";
+import { CiFilter } from "react-icons/ci";
 
 const CardContainer = () => {
-  const [numOfPages, setNumOfPage] = useState(0);
-  const axiosPublic = useAxiosPublic();
+  // State for pagination
+  const [numOfPages, setNumOfPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-  const itemPerPage = 8;
-  const pages = [...Array(numOfPages).keys()];
-  const [searchText, setSearchText] = useState("");
-  const [filteredPro, setFilteredPro] = useState([]);
+  const itemPerPage = 8; // Number of items per page
 
+  // State for search and filters
+  const [searchText, setSearchText] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [brandFilter, setBrandFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
-  // Fetch products with pagination and search functionality
+  // Axios instance for API requests
+  const axiosPublic = useAxiosPublic();
+
+  // Fetch products with pagination, search, and filters
   const {
     data: products = [],
     isPending,
@@ -36,59 +40,60 @@ const CardContainer = () => {
       maxPrice,
     ],
     queryFn: async () => {
-      const res = await axiosPublic.get(
+      const response = await axiosPublic.get(
         `/products?page=${currentPage}&size=${itemPerPage}&searchText=${searchText}&brand=${brandFilter}&category=${categoryFilter}&min=${minPrice}&max=${maxPrice}`
       );
-      setNumOfPage(res.data.pageNum);
-      return res.data.result;
+      setNumOfPages(response.data.pageNum);
+      return response.data.result;
     },
   });
 
+  // Update filtered products whenever products data changes
   useEffect(() => {
-    setFilteredPro(products);
+    if (products.length) {
+      setFilteredProducts(products);
+    }
   }, [products]);
-
-  //   useEffect(() => {
-  //     let filtered = [...products];
-
-  //     if (brandFilter) {
-  //       filtered = filtered.filter((pro) => pro.brandName === brandFilter);
-  //     }
-  //     if (categoryFilter) {
-  //       filtered = filtered.filter((pro) => pro.category === categoryFilter);
-  //     }
-  //     if (minPrice) {
-  //       filtered = filtered.filter((pro) => pro.price >= minPrice);
-  //     }
-  //     if (maxPrice) {
-  //       filtered = filtered.filter((pro) => pro.price <= maxPrice);
-  //     }
-
-  //     setFilteredPro(filtered);
-  //   }, [brandFilter, categoryFilter, minPrice, maxPrice, products]);
 
   // Handle search input change
   const handleSearch = (e) => {
+    e.preventDefault();
     const searchValue = e.target.search.value;
     setSearchText(searchValue);
-    setCurrentPage(0);
+    setCurrentPage(0); // Reset to first page on new search
   };
 
-  const handleShortBtn = (e) => {
+  // Handle sorting
+  const handleSortChange = (e) => {
     const selectedValue = e.target.value;
-    let sortedPro = [...products];
-    if (selectedValue === "ascending") {
-      sortedPro.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    } else if (selectedValue === "descending") {
-      sortedPro.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    } else if (selectedValue === "lowToHigh") {
-      sortedPro.sort((a, b) => new Date(a.price) - new Date(b.price));
-    } else if (selectedValue === "highToLow") {
-      sortedPro.sort((a, b) => new Date(b.price) - new Date(a.price));
+    const sortedProducts = [...products];
+
+    // Sorting logic
+    switch (selectedValue) {
+      case "ascending":
+        sortedProducts.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+        break;
+      case "descending":
+        sortedProducts.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        break;
+      case "lowToHigh":
+        sortedProducts.sort((a, b) => a.price - b.price);
+        break;
+      case "highToLow":
+        sortedProducts.sort((a, b) => b.price - a.price);
+        break;
+      default:
+        break;
     }
-    setFilteredPro(sortedPro);
+
+    setFilteredProducts(sortedProducts);
   };
 
+  // Handle filter submission
   const handleFilterSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -102,62 +107,61 @@ const CardContainer = () => {
   if (isPending || isLoading) {
     return (
       <div className="w-full h-[170px] flex items-center justify-center">
-        <PuffLoader color="#25BCCF"></PuffLoader>
+        <PuffLoader color="#25BCCF" />
       </div>
     );
   }
 
   return (
     <>
-      {/* search and sort and filter*/}
-      <div className="flex flex-col items-center md:flex-row md:justify-between gap-3 mb-7">
-        <div className="relative inline-flex self-center">
+      {/* Search, sort, and filter section */}
+      <div className="grid grid-cols-5 gap-3 mb-7">
+        {/* Sorting */}
+        <div className="relative inline-flex self-center w-full col-span-2">
           <div className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full pointer-events-none">
-            <IoIosArrowDown className="text-xl"></IoIosArrowDown>
+            <IoIosArrowDown className="text-xl" />
           </div>
           <select
-            onChange={handleShortBtn}
-            className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-[300px] pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+            onChange={handleSortChange}
+            className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-full pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
           >
             <option>Sort By - </option>
             <option value="descending">Newest first</option>
             <option value="ascending">Oldest first</option>
-            <option value="lowToHigh">Price : Low to high</option>
-            <option value="highToLow">Price : High to low</option>
+            <option value="lowToHigh">Price: Low to high</option>
+            <option value="highToLow">Price: High to low</option>
           </select>
         </div>
 
-        <div className="w-fit">
+        {/* Search */}
+        <div className="w-full col-span-2">
           <form
             onSubmit={handleSearch}
-            className="relative inline-flex self-center"
+            className="relative inline-flex self-center w-full"
           >
             <input
               defaultValue={searchText}
-              className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-[300px] pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+              className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-full pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               type="text"
               placeholder="Search"
               name="search"
             />
-
-            <button
-              className={`text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[12px] px-5 rounded-r-full`}
-            >
-              <FaSearch className="text-xs"></FaSearch>
+            <button className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[12px] px-5 rounded-r-full">
+              <FaSearch className="text-xs" />
             </button>
           </form>
         </div>
 
-        {/* filters with drawer */}
+        {/* Filters with drawer */}
         <div className="drawer drawer-end z-50">
           <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
-            {/* Page content here */}
             <label
               htmlFor="my-drawer-4"
-              className="drawer-button btn btn-primary"
+              className="border-2 px-5 py-2 rounded-full flex items-center justify-center gap-2 w-full border-[#2EE9B1]"
             >
-              Filters
+              <CiFilter />
+              <p>Filters</p>
             </label>
           </div>
           <div className="drawer-side">
@@ -165,8 +169,7 @@ const CardContainer = () => {
               htmlFor="my-drawer-4"
               aria-label="close sidebar"
               className="drawer-overlay"
-            ></label>
-            {/* Filters  */}
+            />
             <form
               onSubmit={handleFilterSubmit}
               className="flex flex-col gap-3 mb-7 bg-base-200 text-base-content min-h-full w-[400px] p-10"
@@ -175,7 +178,7 @@ const CardContainer = () => {
               <select
                 defaultValue={brandFilter}
                 name="brand"
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10  pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               >
                 <option value="">All Brands</option>
                 <option value="SoundWave">SoundWave</option>
@@ -186,15 +189,13 @@ const CardContainer = () => {
                 <option value="AudioPro">AudioPro</option>
                 <option value="SmartHome">SmartHome</option>
                 <option value="TechAudio">TechAudio</option>
-
-                {/* Add more brand options as needed */}
               </select>
 
               {/* Category Filter */}
               <select
                 defaultValue={categoryFilter}
                 name="category"
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10  pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               >
                 <option value="">All Categories</option>
                 <option value="Electronics">Electronics</option>
@@ -205,7 +206,6 @@ const CardContainer = () => {
                 <option value="Wearables">Wearables</option>
                 <option value="Accessories">Accessories</option>
                 <option value="Personal Care">Personal Care</option>
-                {/* Add more category options as needed */}
               </select>
 
               {/* Price Range Filter */}
@@ -214,14 +214,14 @@ const CardContainer = () => {
                 name="minPrice"
                 placeholder="Min Price"
                 defaultValue={minPrice}
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5  bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               />
               <input
                 type="number"
                 name="maxPrice"
                 placeholder="Max Price"
                 defaultValue={maxPrice}
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5  bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               />
 
               <button className="btn btn-accent">Apply</button>
@@ -230,20 +230,22 @@ const CardContainer = () => {
         </div>
       </div>
 
-      {filteredPro.length < 1 ? (
+      {/* Display products */}
+      {filteredProducts.length < 1 ? (
         <div className="w-full h-[200px] flex items-center justify-center font-semibold text-4xl text-center">
           <div>No Product available.</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredPro?.map((pro) => (
-            <Card key={pro._id} pro={pro}></Card>
+          {filteredProducts.map((product) => (
+            <Card key={product._id} product={product} />
           ))}
         </div>
       )}
 
+      {/* Pagination */}
       <div
-        className={`mx-auto w-fit mt-10 ${pages.length === 0 ? "hidden" : ""}`}
+        className={`mx-auto w-fit mt-10 ${numOfPages === 0 ? "hidden" : ""}`}
       >
         <button
           onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}
@@ -251,22 +253,22 @@ const CardContainer = () => {
         >
           «
         </button>
-        {pages.map((page) => (
+        {Array.from({ length: numOfPages }, (_, page) => (
           <button
             onClick={() => setCurrentPage(page)}
             className={
               currentPage === page
                 ? "bg-blue-800 text-white px-3 py-2 rounded-lg font-semibold ml-2"
-                : "px-3 py-2 bg-gray-200 rounded-lg text-black font-semibold ml-2 "
+                : "px-3 py-2 bg-gray-200 rounded-lg text-black font-semibold ml-2"
             }
             key={page}
           >
-            {page}
+            {page + 1}
           </button>
         ))}
         <button
           onClick={() =>
-            currentPage < pages.length - 1 && setCurrentPage(currentPage + 1)
+            currentPage < numOfPages - 1 && setCurrentPage(currentPage + 1)
           }
           className="px-3 py-2 bg-gray-200 rounded-lg text-black font-semibold ml-2"
         >
