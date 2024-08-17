@@ -3,7 +3,7 @@
 
 # ShopGrid
 
-This application is about diagnostic management system through which diagnostic paid services can be provided.
+This is a Fullstack functionality based Single page website where users can perform some search filtering functionalities. This project will focus on implementing pagination, searching, categorization and sorting of products
 
 ## Live Site URL
 
