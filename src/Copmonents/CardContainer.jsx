@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { IoIosArrowDown } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
 import { PuffLoader } from "react-spinners";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAxiosPublic from "../Hooks/useAxiosPublic";
 import Card from "./Card";
 
@@ -13,6 +13,7 @@ const CardContainer = () => {
   const itemPerPage = 8;
   const pages = [...Array(numOfPages).keys()];
   const [searchText, setSearchText] = useState("");
+  const [filteredPro, setFilteredPro] = useState([]);
 
   // Fetch products with pagination and search functionality
   const {
@@ -30,11 +31,26 @@ const CardContainer = () => {
     },
   });
 
+  useEffect(() => {
+    setFilteredPro(products);
+  }, [products]);
+
   // Handle search input change
   const handleSearch = (e) => {
     const searchValue = e.target.search.value;
     setSearchText(searchValue);
     setCurrentPage(0);
+  };
+
+  const handleShortBtn = (e) => {
+    const selectedValue = e.target.value;
+    let sortedPro = [...products];
+    if (selectedValue === "ascending") {
+      sortedPro.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else if (selectedValue === "descending") {
+      sortedPro.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    setFilteredPro(sortedPro);
   };
 
   // Loading state with spinner
@@ -54,15 +70,21 @@ const CardContainer = () => {
           <div className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full">
             <IoIosArrowDown className="text-xl"></IoIosArrowDown>
           </div>
-          <select className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-[300px] pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full">
+          <select
+            onChange={handleShortBtn}
+            className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-[300px] pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+          >
             <option>Sort By - </option>
-            <option value="ascending">Earliest Date to Latest</option>
-            <option value="descending">Latest Date Earliest</option>
+            <option value="descending">Newest first</option>
+            <option value="ascending">Oldest first</option>
           </select>
         </div>
 
         <div className="w-fit">
-          <form onSubmit={handleSearch} className="relative inline-flex self-center">
+          <form
+            onSubmit={handleSearch}
+            className="relative inline-flex self-center"
+          >
             <input
               defaultValue={searchText}
               className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-[300px] pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
@@ -80,13 +102,13 @@ const CardContainer = () => {
         </div>
       </div>
 
-      {products.length < 1 ? (
+      {filteredPro.length < 1 ? (
         <div className="w-full h-[200px] flex items-center justify-center font-semibold text-4xl text-center">
           <div>No Product available.</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products?.map((pro) => (
+          {filteredPro?.map((pro) => (
             <Card key={pro._id} pro={pro}></Card>
           ))}
         </div>
