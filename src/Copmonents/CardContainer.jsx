@@ -89,6 +89,15 @@ const CardContainer = () => {
     setFilteredPro(sortedPro);
   };
 
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    setBrandFilter(form.brand.value);
+    setCategoryFilter(form.category.value);
+    setMinPrice(form.minPrice.value);
+    setMaxPrice(form.maxPrice.value);
+  };
+
   // Loading state with spinner
   if (isPending || isLoading) {
     return (
@@ -158,11 +167,14 @@ const CardContainer = () => {
               className="drawer-overlay"
             ></label>
             {/* Filters  */}
-            <div className="flex flex-col gap-3 mb-7 bg-base-200 text-base-content min-h-full w-[400px] p-10">
+            <form
+              onSubmit={handleFilterSubmit}
+              className="flex flex-col gap-3 mb-7 bg-base-200 text-base-content min-h-full w-[400px] p-10"
+            >
               {/* Brand Filter */}
               <select
                 defaultValue={brandFilter}
-                onChange={(e) => setBrandFilter(e.target.value)}
+                name="brand"
                 className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10  pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               >
                 <option value="">All Brands</option>
@@ -180,8 +192,8 @@ const CardContainer = () => {
 
               {/* Category Filter */}
               <select
-                onChange={(e) => setCategoryFilter(e.target.value)}
                 defaultValue={categoryFilter}
+                name="category"
                 className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10  pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               >
                 <option value="">All Categories</option>
@@ -199,17 +211,21 @@ const CardContainer = () => {
               {/* Price Range Filter */}
               <input
                 type="number"
+                name="minPrice"
                 placeholder="Min Price"
-                onChange={(e) => setMinPrice(e.target.value)}
+                defaultValue={minPrice}
                 className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5  bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               />
               <input
                 type="number"
+                name="maxPrice"
                 placeholder="Max Price"
-                onChange={(e) => setMaxPrice(e.target.value)}
+                defaultValue={maxPrice}
                 className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5  bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
               />
-            </div>
+
+              <button className="btn btn-accent">Apply</button>
+            </form>
           </div>
         </div>
       </div>
