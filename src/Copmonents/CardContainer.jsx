@@ -50,9 +50,7 @@ const CardContainer = () => {
 
   // Update filtered products whenever products data changes
   useEffect(() => {
-    if (products.length) {
-      setFilteredProducts(products);
-    }
+    setFilteredProducts(products);
   }, [products]);
 
   // Handle search input change
@@ -115,15 +113,15 @@ const CardContainer = () => {
   return (
     <>
       {/* Search, sort, and filter section */}
-      <div className="grid grid-cols-5 gap-3 mb-7">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-7">
         {/* Sorting */}
         <div className="relative inline-flex self-center w-full col-span-2">
-          <div className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full pointer-events-none">
+          <div className="text-white text-xl bg-gradient-to-r from-blue-800 to-blue-800 absolute -top-[6px] -right-[6px] m-2 py-[8px] px-5 rounded-r-full pointer-events-none">
             <IoIosArrowDown className="text-xl" />
           </div>
           <select
             onChange={handleSortChange}
-            className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-full pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+            className="text-xl border-2 border-blue-800  h-10 w-full pl-5 pr-10  hover:border-blue-800 focus:outline-none appearance-none rounded-full"
           >
             <option>Sort By - </option>
             <option value="descending">Newest first</option>
@@ -141,12 +139,12 @@ const CardContainer = () => {
           >
             <input
               defaultValue={searchText}
-              className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 w-full pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+              className="text-xl border-2 border-blue-800 h-10 w-full pl-5 pr-10  hover:border-blue-800 focus:outline-none appearance-none rounded-full"
               type="text"
               placeholder="Search"
               name="search"
             />
-            <button className="text-white text-xl bg-gradient-to-r from-[#25BCCF] to-[#2EE9B1] absolute -top-[6px] -right-[6px] m-2 py-[12px] px-5 rounded-r-full">
+            <button className="text-white text-xl bg-gradient-to-r from-blue-800 to-blue-800 absolute -top-[6px] -right-[6px] m-2 py-[12px] px-5 rounded-r-full">
               <FaSearch className="text-xs" />
             </button>
           </form>
@@ -158,7 +156,7 @@ const CardContainer = () => {
           <div className="drawer-content">
             <label
               htmlFor="my-drawer-4"
-              className="border-2 px-5 py-2 rounded-full flex items-center justify-center gap-2 w-full border-[#2EE9B1]"
+              className="border-2 px-5 py-2 rounded-full flex items-center justify-center gap-2 w-full border-blue-800"
             >
               <CiFilter />
               <p>Filters</p>
@@ -172,40 +170,44 @@ const CardContainer = () => {
             />
             <form
               onSubmit={handleFilterSubmit}
-              className="flex flex-col gap-3 mb-7 bg-base-200 text-base-content min-h-full w-[400px] p-10"
+              className="flex flex-col gap-3 mb-7 bg-base-200 text-base-content min-h-full w-[60%] md:w-[400px] p-4 md:p-10"
             >
               {/* Brand Filter */}
               <select
                 defaultValue={brandFilter}
                 name="brand"
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-blue-800 text-gray-600 h-10 pl-5 pr-3 bg-white hover:border-blue-800 focus:outline-none appearance-none rounded-full"
               >
                 <option value="">All Brands</option>
-                <option value="SoundWave">SoundWave</option>
-                <option value="VisionTech">VisionTech</option>
                 <option value="ComfortSeat">ComfortSeat</option>
+                <option value="HomeEssentials">HomeEssentials</option>
+                <option value="MusicMaster">MusicMaster</option>
+                <option value="EntertainmentX">EntertainmentX</option>
+                <option value="AudioMax">AudioMax</option>
+                <option value="PhotoPro">PhotoPro</option>
                 <option value="GamerX">GamerX</option>
-                <option value="PhotoMaster">PhotoMaster</option>
-                <option value="AudioPro">AudioPro</option>
-                <option value="SmartHome">SmartHome</option>
-                <option value="TechAudio">TechAudio</option>
+                <option value="HealthTech">HealthTech</option>
+                <option value="TechX">TechX</option>
+                <option value="ToolMaster">ToolMaster</option>
+                <option value="HomeTech">HomeTech</option>
               </select>
 
               {/* Category Filter */}
               <select
                 defaultValue={categoryFilter}
                 name="category"
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-blue-800 text-gray-600 h-10 pl-5 pr-3 bg-white hover:border-blue-800 focus:outline-none appearance-none rounded-full"
               >
                 <option value="">All Categories</option>
                 <option value="Electronics">Electronics</option>
                 <option value="Photography">Photography</option>
                 <option value="Computers">Computers</option>
                 <option value="Furniture">Furniture</option>
-                <option value="Home Appliances">Home Appliances</option>
-                <option value="Wearables">Wearables</option>
+                <option value="Appliances">Home Appliances</option>
                 <option value="Accessories">Accessories</option>
-                <option value="Personal Care">Personal Care</option>
+                <option value="Gadgets">Gadgets</option>
+                <option value="Office Supplies">Office Supplies </option>
+                <option value="Health & Fitness">Health & Fitness</option>
               </select>
 
               {/* Price Range Filter */}
@@ -214,14 +216,14 @@ const CardContainer = () => {
                 name="minPrice"
                 placeholder="Min Price"
                 defaultValue={minPrice}
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-blue-800 text-gray-600 h-10 pl-5 bg-white hover:border-blue-800 focus:outline-none appearance-none rounded-full"
               />
               <input
                 type="number"
                 name="maxPrice"
                 placeholder="Max Price"
                 defaultValue={maxPrice}
-                className="text-xl border-2 border-[#2EE9B1] text-gray-600 h-10 pl-5 bg-white hover:border-[#25BCCF] focus:outline-none appearance-none rounded-full"
+                className="text-xl border-2 border-blue-800 text-gray-600 h-10 pl-5 bg-white hover:border-blue-800 focus:outline-none appearance-none rounded-full"
               />
 
               <button className="btn btn-accent">Apply</button>

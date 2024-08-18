@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <footer className=" bg-blue-800 mt-20">
+      <footer className=" bg-blue-900 mt-20">
         <div className="">
           <div className="px-10 pt-12 pb-7 text-white">
             <div className="flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
@@ -22,7 +22,7 @@ const Footer = () => {
                     />
                   </div>
                 </a>
-                <p>ShopGrid Is Another Name For Honesty</p>
+                <p>ShopGridIs Another Name For Honesty</p>
               </div>
               <div className="grid grid-cols-2 text-sm gap-x-3 gap-y-8 lg:w-2/3 sm:grid-cols-4">
                 <div className="space-y-3">

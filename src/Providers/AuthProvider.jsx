@@ -3,13 +3,16 @@ import { app } from "../firebase/firebase.init";
 import {
   createUserWithEmailAndPassword,
   getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
 } from "firebase/auth";
 
 export const AuthContext = createContext();
+const googleProvider = new GoogleAuthProvider();
 const auth = getAuth(app);
 
 const AuthProvider = ({ children }) => {
@@ -27,20 +30,25 @@ const AuthProvider = ({ children }) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
+  // ! google Login
+  const googleLogin = () => {
+    setLoading(true);
+    return signInWithPopup(auth, googleProvider);
+  };
 
-    // ! Update User
-    const updateUser = (name, image) => {
-      setLoading(true);
-      return updateProfile(auth.currentUser, {
-        displayName: name,
-        photoURL: image,
-      });
-    };
+  // ! Update User
+  const updateUser = (name, image) => {
+    setLoading(true);
+    return updateProfile(auth.currentUser, {
+      displayName: name,
+      photoURL: image,
+    });
+  };
 
-  // ! sign Out 
-  const logOut = () =>{
+  // ! sign Out
+  const logOut = () => {
     return signOut(auth);
-  }
+  };
 
   // ! user Observer
   useEffect(() => {
@@ -55,10 +63,11 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const authInfo = {
-    user, 
+    user,
     loading,
     createUserWithEmailAndPass,
     signInWithEmail,
+    googleLogin,
     updateUser,
     logOut,
   };
